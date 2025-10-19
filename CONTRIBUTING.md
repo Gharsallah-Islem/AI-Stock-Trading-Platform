@@ -397,7 +397,8 @@ When suggesting features, include:
 ## 📞 Contact
 
 - Create an issue for bugs or features
-- Email: your.email@example.com
+- Email: gharsallahislem23@gmail.com
+- LinkedIn: [Islem Gharsallah](https://www.linkedin.com/in/islem-gharsallah-649a63305/)
 - Discord: [Join our server](#)
 
 ## 🎉 Recognition

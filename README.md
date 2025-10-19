@@ -376,7 +376,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Islem Gharsallah**
 
 - GitHub: [@Gharsallah-Islem](https://github.com/Gharsallah-Islem)
-- LinkedIn: [Connect with me](https://www.linkedin.com/in/your-profile)
+- LinkedIn: [Connect with me](https://www.linkedin.com/in/islem-gharsallah-649a63305/)
 
 ---
 
