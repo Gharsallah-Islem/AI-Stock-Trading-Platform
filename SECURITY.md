@@ -18,7 +18,7 @@ We take the security of AI Stock Trading Platform seriously. If you believe you 
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
 Instead, please report them via email to:
-- **Email**: gharsallahislem23@gmail.com
+- **Email**: islemgharsallah86@gmail.com
 - **Subject**: [SECURITY] Brief description of the issue
 
 ### What to Include
@@ -158,7 +158,7 @@ We use the following tools to maintain security:
 ## 📞 Contact
 
 For general security questions (non-vulnerabilities):
-- Email: gharsallahislem23@gmail.com
+- Email: islemgharsallah86@gmail.com
 - GitHub Discussions: [Security Category](#)
 - LinkedIn: [Islem Gharsallah](https://www.linkedin.com/in/islem-gharsallah-649a63305/)
 
