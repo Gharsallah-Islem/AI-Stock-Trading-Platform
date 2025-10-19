@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: stock-trading-db
+    environment:
+      POSTGRES_DB: stock_trading_db
+      POSTGRES_USER: stock_user
+      POSTGRES_PASSWORD: stock_pass_2025
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - stock-trading-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stock_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./Backend/stock-prediction-backend
+      dockerfile: Dockerfile
+    container_name: stock-trading-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stock_trading_db
+      SPRING_DATASOURCE_USERNAME: stock_user
+      SPRING_DATASOURCE_PASSWORD: stock_pass_2025
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: your-secret-key-change-in-production
+      PYTHON_SCRIPT_PATH: /app/AI
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./AI:/app/AI
+    networks:
+      - stock-trading-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./Frontend/stock-prediction-frontend
+      dockerfile: Dockerfile
+    container_name: stock-trading-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - stock-trading-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  stock-trading-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

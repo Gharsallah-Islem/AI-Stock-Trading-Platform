@@ -1,0 +1,100 @@
+spring:
+  application:
+    name: stock-prediction-backend
+  datasource:
+    url: jdbc:mysql://localhost:3306/stock_app?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+  data:
+    redis:
+      enabled: false
+server:
+  port: 8080
+ai:
+  model:
+    path: C:/Users/islem/OneDrive/Bureau/project/AI
+    tuner:
+      dir: ${ai.model.path}/tuner_dir
+    lstm:
+      aapl: ${ai.model.path}/lstm_model_AAPL.h5
+      msft: ${ai.model.path}/lstm_model_MSFT.h5
+      gspc: ${ai.model.path}/lstm_model_^GSPC.h5
+    scaler:
+      lstm:
+        aapl: ${ai.model.path}/lstm_scaler_AAPL.pkl
+        msft: ${ai.model.path}/lstm_scaler_MSFT.pkl
+        gspc: ${ai.model.path}/lstm_scaler_^GSPC.pkl
+      xgb:
+        aapl: ${ai.model.path}/xgb_scaler_AAPL.pkl
+        msft: ${ai.model.path}/xgb_scaler_MSFT.pkl
+        gspc: ${ai.model.path}/xgb_scaler_^GSPC.pkl
+    xgb:
+      aapl: ${ai.model.path}/xgb_model_AAPL.pkl
+      msft: ${ai.model.path}/xgb_model_MSFT.pkl
+      gspc: ${ai.model.path}/xgb_model_^GSPC.pkl
+
+    data:
+      macro: ${ai.model.path}/macro_data.pkl
+      sentiment:
+        aapl: ${ai.model.path}/sentiment_AAPL.pkl
+        msft: ${ai.model.path}/sentiment_MSFT.pkl
+        gspc: ${ai.model.path}/sentiment_^GSPC.pkl
+      stock:
+        aapl: ${ai.model.path}/stock_data_AAPL.pkl
+        msft: ${ai.model.path}/stock_data_MSFT.pkl
+        gspc: ${ai.model.path}/stock_data_^GSPC.pkl
+python:
+  script:
+    path: ${ai.model.path}/stock_predictor_pro.py
+  env:
+    path: ${ai.model.path}/stock_env/bin/python
+jwt:
+  secret: stockapp_jwt_secret_key_32_chars_long_2024
+alphavantage:
+  api:
+    key: AXY0IWB8HCFHOXFD
+x:
+  api:
+    key: a15sKG4CCJc8edAq9eXKXk6l0
+    secret: nQiNABPpcG0oIV4s1lDpAUgwqQWAU0lNyu26GB5mzbkpXXbu6o
+websocket:
+  endpoint: /ws/stocks
+logging:
+  level:
+    org.springframework: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    com.stockapp: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Application configuration
+app:
+  version: "1.0.0"
+  environment: "development"
+  max-retries: 3
+  request-timeout: 30000
+  enable-caching: true
+  cache-ttl: 3600
+  prediction:
+    lookback-days: 30
+    confidence-threshold: 0.7
+    max-predictions-per-day: 10
+    enable-real-time-updates: true
+
+# OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

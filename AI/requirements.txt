@@ -1,0 +1,12 @@
+yfinance
+numpy
+pandas
+scikit-learn
+tensorflow
+ta
+joblib
+shap
+keras-tuner
+nltk
+requests
+xgboost

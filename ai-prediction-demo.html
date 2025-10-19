@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Prediction AI Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stock-selector {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .stock-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stock-btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .stock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .stock-btn.active {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .predictions-container {
+            margin-top: 30px;
+        }
+
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .prediction-date {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .prediction-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .prediction-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .confidence {
+            color: #00ff88;
+        }
+
+        .advice-buy {
+            color: #00ff88;
+        }
+
+        .advice-sell {
+            color: #ff6b6b;
+        }
+
+        .advice-hold {
+            color: #ffd700;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .status {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 AI Stock Prediction System</h1>
+
+        <div class="status">
+            ✅ Backend: Running on Port 8080 | 🧠 AI Models: LSTM & XGBoost | 📊 Real-time Predictions
+        </div>
+
+        <div class="stock-selector">
+            <h3>Select a Stock to Get AI Predictions:</h3>
+            <div class="stock-buttons">
+                <button class="stock-btn" onclick="loadPredictions('AAPL')">🍎 AAPL</button>
+                <button class="stock-btn" onclick="loadPredictions('MSFT')">💻 MSFT</button>
+                <button class="stock-btn" onclick="loadPredictions('^GSPC')">📈 S&P 500</button>
+            </div>
+        </div>
+
+        <div class="predictions-container" id="predictionsContainer">
+            <div class="loading">
+                Select a stock above to see AI predictions from your trained models! 🚀
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadPredictions(symbol) {
+            const container = document.getElementById('predictionsContainer');
+
+            // Update active button
+            document.querySelectorAll('.stock-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show loading
+            container.innerHTML = '<div class="loading">🤖 AI Models are analyzing... Please wait!</div>';
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/predictions/${symbol}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const predictions = await response.json();
+
+                if (!predictions || predictions.length === 0) {
+                    container.innerHTML = '<div class="error">No predictions available for this symbol.</div>';
+                    return;
+                }
+
+                // Display predictions
+                let html = '<h3>🎯 AI Predictions for ' + symbol + '</h3>';
+
+                predictions.forEach((pred, index) => {
+                    const targetDate = new Date(pred.targetDate || pred.predictionDate);
+                    const confidence = (pred.confidenceScore * 100).toFixed(1);
+                    const adviceClass = `advice-${pred.advice.toLowerCase()}`;
+
+                    html += `
+                        <div class="prediction-card">
+                            <div class="prediction-header">
+                                <div class="prediction-date">
+                                    📅 ${targetDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    })}
+                                </div>
+                                <div class="prediction-price">$${pred.predictedPrice.toFixed(2)}</div>
+                            </div>
+                            <div class="prediction-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Confidence</div>
+                                    <div class="detail-value confidence">${confidence}%</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">AI Advice</div>
+                                    <div class="detail-value ${adviceClass}">${pred.advice}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Model Type</div>
+                                    <div class="detail-value">${pred.modelType}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Days Ahead</div>
+                                    <div class="detail-value">${index + 1}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading predictions:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        ❌ Error loading predictions: ${error.message}<br>
+                        Make sure the backend is running on localhost:8080
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+
+</html>
