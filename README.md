@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**A Professional Full-Stack Trading Platform with Real-Time AI Predictions**
+**A Professional Full-Stack Trading Platform with Real- Time AI Predictions**
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Architecture](#-architecture) • [API Documentation](#-api-documentation) • [Contributing](#-contributing)
 
